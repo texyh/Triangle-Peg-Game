@@ -71,45 +71,56 @@ namespace InDesignGame
                         to = new Postion { RowIndex = i, Cell = j };
 
                         //check left
-                        if (j-2 >= 0 && j-2 < currentRow.Count && currentRow[j-2] == 1 && currentRow[j-1] == 1)
+                        if (j-2 > -1 &&  currentRow[j-2] == 1 && currentRow[j-1] == 1)
                         {
                             from = new Postion { RowIndex = i, Cell = j - 2 };
-                            jumpedOver = new Postion { RowIndex = 1, Cell = j - 1 };
+                            jumpedOver = new Postion { RowIndex = i, Cell = j - 1 };
+                            Move(currentGrid, from, to, jumpedOver);
                         }
 
                         //check right
-                        if (currentRow[j + 2] == 1 && currentRow[j + 1] == 1)
+                        if (j+2 < currentRow.Count && currentRow[j + 2] == 1 && currentRow[j + 1] == 1)
                         {
                             from = new Postion { RowIndex = i, Cell = j + 2 };
-                            jumpedOver = new Postion { RowIndex = i, Cell = currentRow[j + 1] };
+                            jumpedOver = new Postion { RowIndex = i, Cell = j + 1 };
+                            Move(currentGrid, from, to, jumpedOver);
+
                         }
 
                         //checktop
-                        if (currentGrid[i - 2] != null && currentGrid[i - 1] !=null && currentGrid[i -2][j] == 1 && currentGrid[i -1][j] == 1 )
+                        if (i - 2 > -1 &&  currentGrid[i-2].Count > j && currentGrid[i - 2][j] == 1 && currentGrid[i -1][j] == 1 )
                         {
                             from = new Postion { RowIndex = i -2, Cell = j };
                             jumpedOver = new Postion { RowIndex = i-1, Cell = j };
-                        }
+                            Move(currentGrid, from, to, jumpedOver);
 
-                        //checktopleft
-                        if (currentGrid[i - 2] != null && currentGrid[i - 1] != null && currentGrid[i - 2][j-2] == 1 && currentGrid[i - 1][j-1] == 1)
-                        {
-                            from = new Postion { RowIndex = i - 2, Cell = j-2 };
-                            jumpedOver = new Postion { RowIndex = i - 1, Cell = j-2};
                         }
 
                         //checkbottom
-                        if (currentGrid[i + 2] != null && currentGrid[i + 1] != null && currentGrid[i + 2][j] == 1 && currentGrid[i + 1][j] == 1)
+                        if (i + 2 < currentGrid.Count && currentGrid[i + 2][j] == 1 && currentGrid[i + 1][j] == 1)
                         {
                             from = new Postion { RowIndex = i + 2, Cell = j };
                             jumpedOver = new Postion { RowIndex = i + 1, Cell = j };
+                            Move(currentGrid, from, to, jumpedOver);
                         }
 
+                        //checktopleft
+                        if (i - 2 > -1 && j - 2 > -1 && currentGrid[i - 2][j-2] == 1 && currentGrid[i - 1][j-1] == 1)
+                        {
+                            from = new Postion { RowIndex = i - 2, Cell = j-2 };
+                            jumpedOver = new Postion { RowIndex = i - 1, Cell = j-1};
+                            Move(currentGrid, from, to, jumpedOver);
+                        }
+
+                       
+
                         //bottom right
-                        if (currentGrid[i + 2] != null && currentGrid[i + 1] != null && currentGrid[i + 2][j + 2] == 1 && currentGrid[i + 1][j + 2] == 1)
+                        if ( i + 2 < currentGrid.Count && currentGrid[i + 1].Count > j + 2 && currentGrid[i + 2][j + 2] == 1 && currentGrid[i + 1][j + 1] == 1)
                         {
                             from = new Postion { RowIndex = i + 2, Cell = j + 2 };
-                            jumpedOver = new Postion { RowIndex = i + 1, Cell = j + 2 };
+                            jumpedOver = new Postion { RowIndex = i + 1, Cell = j + 1 };
+                            Move(currentGrid, from, to, jumpedOver);
+
                         }
 
 
@@ -119,13 +130,20 @@ namespace InDesignGame
             }
         }
 
-        public void Move(List<List<int>> grid, Postion from, Postion to, Postion jumpeOver)
+        public void Move(List<List<int>> currentGrid, Postion from, Postion to, Postion jumpeOver)
         {
-            var gridCopy = grid;
+            var gridCopy = currentGrid;
 
             gridCopy[from.RowIndex][from.Cell] = 0;
             gridCopy[to.RowIndex][to.Cell] = 1;
             gridCopy[jumpeOver.RowIndex][jumpeOver.Cell] = 0;
+
+            var x = grid[from.RowIndex][from.Cell];
+            var y = grid[to.RowIndex][to.Cell];
+            if(x == 2 && y == 7)
+            {
+                Console.WriteLine($"{grid[from.RowIndex][from.Cell]} to {grid[to.RowIndex][to.Cell]}");
+            }
 
             var pegsCount = GetPegCount(gridCopy);
 
@@ -153,7 +171,7 @@ namespace InDesignGame
                     }
                 });
             });
-
+            
             return count;
         }
     }
